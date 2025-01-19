@@ -27,7 +27,8 @@ import sys
 
 import pymysql
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
+from sqlalchemy import select
 import model
 
 print("start")
@@ -37,11 +38,38 @@ if len(sys.argv) > 1:
 else:
     server = "localhost"
 
-engine = create_engine('mysql+pymysql://yafraadmin:yafra@webdev/yafra', echo=True)
-Session = sessionmaker(bind=engine)
-session = Session()
-for instance in session.query(model.Person).order_by(model.Person.name):
-    print(instance.name)
+# use mysql+pymysql://db:user@host/dbname
+# use sqlite://
+engine = create_engine('sqlite:///test.db', echo=True)
+
+# create tables
+model.Base.metadata.create_all(engine)
+
+# insert demo date
+with Session(engine) as session:
+    spongebob = model.User(
+        name="spongebob",
+        fullname="Spongebob Squarepants",
+        addresses=[model.Address(email_address="spongebob@sqlalchemy.org")],
+    )
+    sandy = model.User(
+        name="sandy",
+        fullname="Sandy Cheeks",
+        addresses=[
+            model.Address(email_address="sandy@sqlalchemy.org"),
+            model.Address(email_address="sandy@squirrelpower.org"),
+        ],
+    )
+    patrick = model.User(name="patrick", fullname="Patrick Star")
+    session.add_all([spongebob, sandy, patrick])
+    session.commit()
+
+
+
+session = Session(engine)
+stmt = select(model.User).where(model.User.name.in_(["spongebob", "sandy"]))
+for user in session.scalars(stmt):
+    print(user)
 
 print("stop")
 #raw_input()
