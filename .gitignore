@@ -111,3 +111,4 @@ pids
 *.pid
 *.seed
 test.png
+test.db
