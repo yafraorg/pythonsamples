@@ -1,2 +1,2 @@
-pymysql==1.1.1
-sqlalchemy==2.0.37
+pymysql
+sqlalchemy

@@ -1,3 +1,3 @@
-Pillow==11.1.0
-pyocr==0.8.5
-Wand==0.6.13
+Pillow
+pyocr
+Wand
